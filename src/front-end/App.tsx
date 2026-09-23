@@ -11,9 +11,15 @@ export default function App() {
     fetch('/api/movies/popular')
       .then((response) => response.json())
       .then((data) => {
+        // read parameters from the URL query string
+        const queryParams = new URLSearchParams(window.location.search);
+        const language = queryParams.get('language') || DEFAULT_LANGUAGE;
+        const page = queryParams.get('page') || DEFAULT_PAGE;
+        const region = queryParams.get('region') || DEFAULT_REGION;
         console.log('Fetched movies data:', data) // Log the fetched data for debugging
         setMovies(data.results) // Update the state with the fetched movies data
       })
+    
   }, [])
   return (
       <div>
