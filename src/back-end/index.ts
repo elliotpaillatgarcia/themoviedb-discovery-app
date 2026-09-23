@@ -1,6 +1,9 @@
 import express from 'express';
 import { tmdbAccessToken } from './config';
-import { MoviesApiResponse, TmdbMoviesRawResponse } from './schemas/MoviesTypes';
+import {
+  MoviesApiResponse,
+  TmdbMoviesRawResponse,
+} from './schemas/MoviesTypes';
 import { toSupportedMovie } from './utils';
 import { DEFAULT_LANGUAGE, DEFAULT_PAGE, DEFAULT_REGION } from './constants';
 
@@ -40,23 +43,19 @@ app.get('/api/movies/popular', async (_req: express.Request, res: express.Respon
         Authorization: `Bearer ${tmdbAccessToken}`,
         'Content-Type': 'application/json;charset=utf-8'
       }
-    });
 
-    if (!response.ok) {
-      throw new Error(`TMDB API request failed with status ${response.status}`);
-    }
+      const rawData = (await response.json()) as TmdbMoviesRawResponse;
 
-    const rawData = (await response.json()) as TmdbMoviesRawResponse;
-    
-    const data: MoviesApiResponse = {
+      const data: MoviesApiResponse = {
         page: rawData.page,
         results: rawData.results.map(toSupportedMovie),
         total_pages: rawData.total_pages,
-        total_results: rawData.total_results
-    };
-    res.json(data);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch popular movies' });
-  }
-});
-
+        total_results: rawData.total_results,
+      };
+      res.json(data);
+    } catch (error) {
+      console.error('Error fetching popular movies:', error);
+      res.status(500).json({ error: 'Failed to fetch popular movies' });
+    }
+  },
+);

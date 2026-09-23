@@ -16,26 +16,35 @@ export default function App() {
     fetch(`/api/movies/popular?language=${language}&page=${page}&region=${region}`)
       .then((response) => response.json())
       .then((data) => {
-        console.log('Fetched movies data:', data) // Log the fetched data for debugging
-        setMovies(data.results) // Update the state with the fetched movies data
+        console.log('Fetched movies data:', data); // Log the fetched data for debugging
+        setMovies(data.results); // Update the state with the fetched movies data
       })
     
   }, [])
   return (
-      <div>
-        <h1>Popular Movies</h1>
+    <main className="app-shell">
+      <header className="app-header">
+        <h1>Films populaires</h1>
+        <h2>
+          Films tendances en France, d'après les données de{' '}
+          <b>The Movie Database</b>
+        </h2>
+      </header>
+      <section>
         {movies ? (
-          <ul>
+          <ul className="movie-grid">
             {movies.map((movie) => (
               <li key={movie.id}>
-                <h2>{movie.title}</h2>
-                <p>{movie.overview}</p>
-                <p>Release Date: {movie.release_date}</p>
-                <p>Rating: {movie.vote_average}</p>
+                <article>
+                  <MovieItem movie={movie} />
+                </article>
               </li>
             ))}
           </ul>
-        ) : null}
-      </div>
-    )
+        ) : (
+          <p className="status-message">Loading...</p>
+        )}
+      </section>
+    </main>
+  );
 }
