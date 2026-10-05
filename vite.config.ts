@@ -10,6 +10,6 @@ export default defineConfig({
     },
   },
   test: {
-    include: ['src/back-end/**/*.test.ts'],
+    include: ['src/**/*.test.{ts,tsx}'],
   },
 });
