@@ -1,5 +1,7 @@
 import type { DatabaseSync } from 'node:sqlite';
-
+/**
+ * Represents a genre in the database.
+ */
 export interface Genre {
   id: number;
   name: string;
