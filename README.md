@@ -86,6 +86,15 @@ npx tsx src/back-end/backend-cli.ts create-database --path ./data/ma-base.sqlite
 
 La commande initialise le schéma sans supprimer les données d'une base existante.
 
+Pour importer ou actualiser les films depuis le CSV fourni :
+
+```sh
+npx tsx src/back-end/backend-cli.ts add-movies ./data/movies.csv
+npx tsx src/back-end/backend-cli.ts add-movies ./data/movies.csv --path ./data/ma-base.sqlite
+```
+
+L'import est transactionnel : une erreur annule toutes les écritures du fichier.
+
 ## API locale
 
 | Méthode | Route                 | Description                                                       |
