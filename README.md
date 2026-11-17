@@ -1,4 +1,4 @@
-# themoviedb-discovery-app
+# themoviedb-discovery-app ...
 
 Application web de découverte de films qui s'appuie sur l'API de [The Movie Database (TMDB)](https://www.themoviedb.org/). Elle affiche les films populaires en France et permet de consulter leur fiche détaillée.
 
