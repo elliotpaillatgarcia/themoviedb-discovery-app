@@ -38,7 +38,11 @@ export type TmdbMovieDetails = {
   video: boolean;
   vote_average: number;
   vote_count: number;
+  runtime: number | null;
+  budget: number;
+  revenue: number;
   genres: Array<{ id: number; name: string }>;
+  production_countries: Array<{ iso_3166_1: string; name: string }>;
   tagline: string | null;
   production_companies: Array<{
     id: number;
@@ -64,6 +68,11 @@ export type MovieDetails = Omit<
   TmdbMovieDetails,
   'adult' | 'video' | 'production_companies'
 >;
+
+export type Country = {
+  code: string;
+  name: string;
+};
 
 // TypeScript type for the API response when fetching popular movies, containing an array of supported Movie objects.
 export type ApiErrorResponse = {
