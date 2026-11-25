@@ -21,6 +21,7 @@ export function registerMoviesApi(app: Express): void {
   app.get(
     '/api/movies/popular',
     async (_req: express.Request, res: express.Response) => {
+      console.log('Fetching popular movies from TMDB API....');
       try {
         // Create the query parameters for the TMDB API request
         const queryParams = createMovieQueryParams(_req.query);
@@ -44,6 +45,7 @@ export function registerMoviesApi(app: Express): void {
           );
         }
 
+        console.log('Successfully fetched popular movies from TMDB API.');
         // Parse the raw response from the TMDB API
         const rawData = (await response.json()) as TmdbMoviesRawResponse;
 
@@ -57,6 +59,7 @@ export function registerMoviesApi(app: Express): void {
 
         res.json(data);
       } catch (error) {
+        console.log('ici');
         console.error('Error fetching popular movies:', error);
         res.status(500).json({ error: 'Failed to fetch popular movies' });
       }
