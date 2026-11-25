@@ -8,29 +8,49 @@ import {
 import type { Movie } from '../../../back-end/types/MoviesTypes';
 
 export default function MoviesListPage() {
-  // State to hold the fetched movies data, initialized to null
   const [movies, setMovies] = useState<Movie[] | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
-    // read parameters from the URL query string or use default values if not provided
+    let active = true;
     const urlParams = new URLSearchParams(window.location.search);
     const language = urlParams.get('language') || DEFAULT_LANGUAGE;
     const page = urlParams.get('page') || DEFAULT_PAGE;
     const region = urlParams.get('region') || DEFAULT_REGION;
 
-    // debug log the query parameters
-    console.log('Query Params from frontend:', { language, page, region });
+    async function fetchMovies() {
+      try {
+        const response = await fetch(
+          `/api/movies/popular?language=${language}&page=${page}&region=${region}`,
+        );
+        const data = (await response.json()) as {
+          results?: Movie[];
+        };
 
-    // fetch data from an API /api/movies/popular with query parameters
-    fetch(
-      `/api/movies/popular?language=${language}&page=${page}&region=${region}`,
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Fetched movies data:', data); // Log the fetched data for debugging
-        setMovies(data.results); // Update the state with the fetched movies data
-      });
-  }, []);
+        if (!response.ok || !Array.isArray(data.results)) {
+          throw new Error('Movie request failed');
+        }
+
+        if (active) {
+          setMovies(data.results);
+          setLoading(false);
+        }
+      } catch {
+        if (active) {
+          setError(true);
+          setLoading(false);
+        }
+      }
+    }
+
+    void fetchMovies();
+
+    return () => {
+      active = false;
+    };
+  }, [retryCount]);
 
   return (
     <main className="app-shell">
@@ -42,7 +62,25 @@ export default function MoviesListPage() {
         </h2>
       </header>
       <section>
-        {movies ? (
+        {loading ? (
+          <p className="status-message">Loading...</p>
+        ) : error ? (
+          <div className="status-message" role="alert">
+            <p>
+              Impossible de charger les films. Vérifiez la connexion à TMDB.
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setLoading(true);
+                setError(false);
+                setRetryCount((count) => count + 1);
+              }}
+            >
+              Réessayer
+            </button>
+          </div>
+        ) : movies?.length ? (
           <ul className="movie-grid">
             {movies.map((movie) => (
               <li key={movie.id}>
@@ -53,7 +91,7 @@ export default function MoviesListPage() {
             ))}
           </ul>
         ) : (
-          <p className="status-message">Loading...</p>
+          <p className="status-message">Aucun film trouvé.</p>
         )}
       </section>
     </main>
